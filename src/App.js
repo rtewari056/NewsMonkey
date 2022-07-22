@@ -9,7 +9,12 @@ export default class App extends Component {
     return (
       <>
         <Navbar />
-        <News pageSize={5}/>
+        <News
+          pageSize={5}
+          apiKey="95a1932962814593a37f42c357e22595"
+          country="in"
+          category="general"
+        />
       </>
     );
   }

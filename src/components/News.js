@@ -1,10 +1,19 @@
 import React, { Component } from "react";
 import Newsitem from "./Newsitem";
 import Spinner from "./Spinner";
+import PropTypes from 'prop-types'
 
 export class News extends Component {
-  apiKey = "95a1932962814593a37f42c357e22595";
-  country = "in";
+  static defaultProps = {
+    country: 'in',
+    pageSize: 8,
+  }
+
+  static propTypes = {
+    country: PropTypes.string,
+    pageSize: PropTypes.number
+  }
+
   constructor() {
     super();
     this.state = {
@@ -15,7 +24,7 @@ export class News extends Component {
   }
 
   async componentDidMount() {
-    const apiURL = `https://newsapi.org/v2/top-headlines?country=${this.country}&apiKey=${this.apiKey}&page=1&pageSize=${this.props.pageSize}`;
+    const apiURL = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=1&pageSize=${this.props.pageSize}`;
 
     this.setState({ loading: true }); // When app starts
 
@@ -39,8 +48,8 @@ export class News extends Component {
 
   handlePreviousClick = async () => {
     const apiURL = `https://newsapi.org/v2/top-headlines?country=${
-      this.country
-    }&apiKey=${this.apiKey}&page=${this.state.pageNumber - 1}&pageSize=${
+      this.props.country
+    }&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.pageNumber - 1}&pageSize=${
       this.props.pageSize
     }`;
 
@@ -73,8 +82,8 @@ export class News extends Component {
       */
 
       const apiURL = `https://newsapi.org/v2/top-headlines?country=${
-        this.country
-      }&apiKey=${this.apiKey}&page=${this.state.pageNumber + 1}&pageSize=${
+        this.props.country
+      }&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.pageNumber + 1}&pageSize=${
         this.props.pageSize
       }`;
 
@@ -93,7 +102,7 @@ export class News extends Component {
 
   render() {
     return (
-      <div className="container my-5">
+      <div className="container my-3">
         <h2 className="text-center">NewsMonkey - Top Headlines</h2>
 
         {this.state.loading && <Spinner />}
