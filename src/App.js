@@ -9,13 +9,8 @@ export default class App extends Component {
     return (
       <>
         <Navbar />
-        <News />
+        <News pageSize={5}/>
       </>
     );
   }
 }
-
-
-// Website: https://newsapi.org/s/india-news-api
-// Email: noqubina@labworld.org
-// Password: bekGkZh%e^BUJ9q#

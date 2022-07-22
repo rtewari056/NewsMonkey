@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Newsitem from "./Newsitem";
+import Spinner from "./Spinner";
 
 export class News extends Component {
   apiKey = "95a1932962814593a37f42c357e22595";
@@ -14,13 +15,17 @@ export class News extends Component {
   }
 
   async componentDidMount() {
-    const apiURL = `https://newsapi.org/v2/top-headlines?country=${this.country}&apiKey=${this.apiKey}&page=1&pageSize=20`;
+    const apiURL = `https://newsapi.org/v2/top-headlines?country=${this.country}&apiKey=${this.apiKey}&page=1&pageSize=${this.props.pageSize}`;
+
+    this.setState({ loading: true }); // When app starts
+
     const data = await fetch(apiURL);
     const parsedData = await data.json();
 
     this.setState({
       articles: parsedData.articles,
       totalResults: parsedData.totalResults,
+      loading: false, // After fetching data 
     });
   }
 
@@ -35,36 +40,53 @@ export class News extends Component {
   handlePreviousClick = async () => {
     const apiURL = `https://newsapi.org/v2/top-headlines?country=${
       this.country
-    }&apiKey=${this.apiKey}&page=${this.state.pageNumber - 1}&pageSize=20`;
+    }&apiKey=${this.apiKey}&page=${this.state.pageNumber - 1}&pageSize=${
+      this.props.pageSize
+    }`;
+
+    this.setState({ loading: true }); // Before fetching the data
+
     const data = await fetch(apiURL);
     const parsedData = await data.json();
 
     this.setState({
       articles: parsedData.articles,
       pageNumber: this.state.pageNumber - 1,
+      loading: false, // After data fetched
     });
   };
 
   handleNextClick = async () => {
-    // 
-    if (this.state.pageNumber + 1 > Math.ceil(this.state.totalResults / 20)) {
-      // If there is no articles left to populate on the page then this chunk of code will run
+    //
+    if (
+      !(
+        this.state.pageNumber + 1 >
+        Math.ceil(this.state.totalResults / this.props.pageSize)
+      )
+    ) {
+      // If there is no articles left to populate on the page then this chunk of code will not run
       /*
       Suppose totalResults = 21 So, Math.ceil(21/20) will be equals 2
-        At first, page = 1 is not greater than 2
-        After clicking on the "Next" button, page = 2 which is also not greater than 2
-        Again clicking on the "Next" button, page = 3 which is greater than 2, so now there is no articles left to populate on the screen
+        At first, pageNumber = 1 is not greater than 2
+        After clicking on the "Next" button, pageNumber = 2 which is also not greater than 2
+        Again clicking on the "Next" button, pageNumber = 3 which is greater than 2, so now there is no articles left to populate on the screen
       */
-    } else {
+
       const apiURL = `https://newsapi.org/v2/top-headlines?country=${
         this.country
-      }&apiKey=${this.apiKey}&page=${this.state.pageNumber + 1}&pageSize=20`;
+      }&apiKey=${this.apiKey}&page=${this.state.pageNumber + 1}&pageSize=${
+        this.props.pageSize
+      }`;
+
+      this.setState({ loading: true }); // Before fetching the data
+
       const data = await fetch(apiURL);
       const parsedData = await data.json();
 
       this.setState({
         articles: parsedData.articles,
         pageNumber: this.state.pageNumber + 1,
+        loading: false, // After data fetched
       });
     }
   };
@@ -72,10 +94,13 @@ export class News extends Component {
   render() {
     return (
       <div className="container my-5">
-        <h2>NewsMonkey - Top Headlines</h2>
+        <h2 className="text-center">NewsMonkey - Top Headlines</h2>
+
+        {this.state.loading && <Spinner />}
 
         <div className="row">
-          {this.state.articles.map((element) => {
+         {/* If loading is false then only insert the news items */}
+          {!this.state.loading && this.state.articles.map((element) => {
             return (
               <Newsitem
                 key={element.url} // When using map() method, Keys(should be unique) help React identify which items have changed, are added, or are removed
@@ -104,6 +129,10 @@ export class News extends Component {
               type="button"
               className="btn btn-dark"
               onClick={this.handleNextClick}
+              disabled={
+                this.state.pageNumber + 1 >
+                Math.ceil(this.state.totalResults / this.props.pageSize)
+              }
             >
               Next &raquo;
             </button>
