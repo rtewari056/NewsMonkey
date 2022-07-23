@@ -1,18 +1,18 @@
 import React, { Component } from "react";
 import Newsitem from "./Newsitem";
 import Spinner from "./Spinner";
-import PropTypes from 'prop-types'
+import PropTypes from "prop-types";
 
 export class News extends Component {
   static defaultProps = {
-    country: 'in',
+    country: "in",
     pageSize: 8,
-  }
+  };
 
   static propTypes = {
     country: PropTypes.string,
-    pageSize: PropTypes.number
-  }
+    pageSize: PropTypes.number,
+  };
 
   constructor() {
     super();
@@ -34,7 +34,7 @@ export class News extends Component {
     this.setState({
       articles: parsedData.articles,
       totalResults: parsedData.totalResults,
-      loading: false, // After fetching data 
+      loading: false, // After fetching data
     });
   }
 
@@ -49,9 +49,9 @@ export class News extends Component {
   handlePreviousClick = async () => {
     const apiURL = `https://newsapi.org/v2/top-headlines?country=${
       this.props.country
-    }&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.pageNumber - 1}&pageSize=${
-      this.props.pageSize
-    }`;
+    }&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${
+      this.state.pageNumber - 1
+    }&pageSize=${this.props.pageSize}`;
 
     this.setState({ loading: true }); // Before fetching the data
 
@@ -83,9 +83,9 @@ export class News extends Component {
 
       const apiURL = `https://newsapi.org/v2/top-headlines?country=${
         this.props.country
-      }&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.pageNumber + 1}&pageSize=${
-        this.props.pageSize
-      }`;
+      }&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${
+        this.state.pageNumber + 1
+      }&pageSize=${this.props.pageSize}`;
 
       this.setState({ loading: true }); // Before fetching the data
 
@@ -108,23 +108,26 @@ export class News extends Component {
         {this.state.loading && <Spinner />}
 
         <div className="row">
-         {/* If loading is false then only insert the news items */}
-          {!this.state.loading && this.state.articles.map((element) => {
-            return (
-              <Newsitem
-                key={element.url} // When using map() method, Keys(should be unique) help React identify which items have changed, are added, or are removed
-                title={element.title ? element.title : ""} // If element.title is equals null then set title=element.title else title=""
-                description={element.description ? element.description : ""}
-                imageURL={
-                  element.urlToImage
-                    ? element.urlToImage
-                    : "http://mapandan.gov.ph/wp-content/uploads/2018/03/no_image.jpg"
-                }
-                newsURL={element.url}
-                publishedAt={this.publishTime(element.publishedAt)}
-              />
-            );
-          })}
+          {/* If loading is false then only insert the news items */}
+          {!this.state.loading &&
+            this.state.articles.map((element) => {
+              return (
+                <Newsitem
+                  key={element.url} // When using map() method, Keys(should be unique) help React identify which items have changed, are added, or are removed
+                  title={element.title ? element.title : ""} // If element.title is equals null then set title=element.title else title=""
+                  description={element.description ? element.description : ""}
+                  imageURL={
+                    element.urlToImage
+                      ? element.urlToImage
+                      : "http://mapandan.gov.ph/wp-content/uploads/2018/03/no_image.jpg"
+                  }
+                  newsURL={element.url}
+                  publishedAt={this.publishTime(element.publishedAt)}
+                  author={element.author}
+                  source={element.source.name}
+                />
+              );
+            })}
           <div className="container mt-5 d-flex justify-content-between">
             <button
               type="button"
