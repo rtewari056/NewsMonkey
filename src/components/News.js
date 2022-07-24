@@ -23,35 +23,8 @@ export class News extends Component {
     };
   }
 
-  async componentDidMount() {
-    const apiURL = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=1&pageSize=${this.props.pageSize}`;
-
-    this.setState({ loading: true }); // When app starts
-
-    const data = await fetch(apiURL);
-    const parsedData = await data.json();
-
-    this.setState({
-      articles: parsedData.articles,
-      totalResults: parsedData.totalResults,
-      loading: false, // After fetching data
-    });
-  }
-
-  // Function to convert iso 8601 date format
-  publishTime = (date) => {
-    let d = new Date(
-      date.toLocaleString(undefined, { timeZone: "Asia/Kolkata" })
-    );
-    return `${d.toUTCString()}`;
-  };
-
-  handlePreviousClick = async () => {
-    const apiURL = `https://newsapi.org/v2/top-headlines?country=${
-      this.props.country
-    }&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${
-      this.state.pageNumber - 1
-    }&pageSize=${this.props.pageSize}`;
+  updateNews = async () => {
+    const apiURL = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.pageNumber}&pageSize=${this.props.pageSize}`;
 
     this.setState({ loading: true }); // Before fetching the data
 
@@ -60,44 +33,33 @@ export class News extends Component {
 
     this.setState({
       articles: parsedData.articles,
-      pageNumber: this.state.pageNumber - 1,
+      pageNumber: this.state.pageNumber,
       loading: false, // After data fetched
     });
   };
 
+  async componentDidMount() {
+    this.updateNews();
+  }
+
+  handlePreviousClick = async () => {
+    // If you use await with both then it will cause to wait for setting state and then update the news
+    await this.setState({ pageNumber: this.state.pageNumber - 1 });
+    this.updateNews();
+  };
+
   handleNextClick = async () => {
-    //
-    if (
-      !(
-        this.state.pageNumber + 1 >
-        Math.ceil(this.state.totalResults / this.props.pageSize)
-      )
-    ) {
-      // If there is no articles left to populate on the page then this chunk of code will not run
-      /*
-      Suppose totalResults = 21 So, Math.ceil(21/20) will be equals 2
-        At first, pageNumber = 1 is not greater than 2
-        After clicking on the "Next" button, pageNumber = 2 which is also not greater than 2
-        Again clicking on the "Next" button, pageNumber = 3 which is greater than 2, so now there is no articles left to populate on the screen
-      */
+    // If you use await with both then it will cause to wait for setting state and then update the news
+    await this.setState({ pageNumber: this.state.pageNumber + 1 });
+    this.updateNews();
+  };
 
-      const apiURL = `https://newsapi.org/v2/top-headlines?country=${
-        this.props.country
-      }&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${
-        this.state.pageNumber + 1
-      }&pageSize=${this.props.pageSize}`;
-
-      this.setState({ loading: true }); // Before fetching the data
-
-      const data = await fetch(apiURL);
-      const parsedData = await data.json();
-
-      this.setState({
-        articles: parsedData.articles,
-        pageNumber: this.state.pageNumber + 1,
-        loading: false, // After data fetched
-      });
-    }
+  // Function to convert iso 8601 date format
+  publishTime = (date) => {
+    let d = new Date(
+      date.toLocaleString(undefined, { timeZone: "Asia/Kolkata" })
+    );
+    return `${d.toUTCString()}`;
   };
 
   render() {
@@ -142,6 +104,12 @@ export class News extends Component {
               className="btn btn-dark"
               onClick={this.handleNextClick}
               disabled={
+                /*
+                Suppose totalResults = 21 So, Math.ceil(21/20) will be equals 2
+                  At first, pageNumber = 1 is not greater than 2
+                  After clicking on the "Next" button, pageNumber = 2 which is also not greater than 2
+                  Again clicking on the "Next" button, pageNumber = 3 which is greater than 2, so now there is no articles left to populate on the screen
+                */
                 this.state.pageNumber + 1 >
                 Math.ceil(this.state.totalResults / this.props.pageSize)
               }
