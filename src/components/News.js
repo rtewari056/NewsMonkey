@@ -40,35 +40,29 @@ export class News extends Component {
   }
 
   updateNews = async () => {
+    this.props.setProgress(10);
+
     const apiURL = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.pageNumber}&pageSize=${this.props.pageSize}`;
 
     this.setState({ loading: true }); // Before fetching the data
 
     const data = await fetch(apiURL);
+    this.props.setProgress(50); // After getting response, setting progress to 30%
     const parsedData = await data.json();
+    this.props.setProgress(70); // After converting it into JSON, setting progress to 70%
 
     this.setState({
       articles: parsedData.articles,
       pageNumber: this.state.pageNumber,
       loading: false, // After data fetched
     });
+
+    this.props.setProgress(100); // At the end, setting it to 100%
   };
 
   async componentDidMount() {
     this.updateNews();
   }
-
-  // handlePreviousClick = async () => {
-  //   // If you use await with both then it will cause to wait for setting state and then update the news
-  //   await this.setState({ pageNumber: this.state.pageNumber - 1 });
-  //   this.updateNews();
-  // };
-
-  // handleNextClick = async () => {
-  //   // If you use await with both then it will cause to wait for setting state and then update the news
-  //   await this.setState({ pageNumber: this.state.pageNumber + 1 });
-  //   this.updateNews();
-  // };
 
   fetchMoreData = async () => {
     await this.setState({ pageNumber: this.state.pageNumber + 1 });
