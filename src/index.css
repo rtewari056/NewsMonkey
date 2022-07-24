@@ -1,0 +1,4 @@
+/* For removing vertical scroll bar */
+.infinite-scroll-component {
+  overflow: hidden !important;
+}

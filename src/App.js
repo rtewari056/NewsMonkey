@@ -4,7 +4,7 @@ import News from "./components/News";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 export default class App extends Component {
-  pageSize = 15; // Change this variable to set number of articles you want to show on the page
+  pageSize = 6; // Change this variable to set number of articles you want to show on the page
   apiKey="95a1932962814593a37f42c357e22595";
   country="in"
 

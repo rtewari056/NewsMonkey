@@ -4,8 +4,7 @@ import "../spinner.css";
 export class Spinner extends Component {
   render() {
     return (
-
-      <div className="spinner-container d-flex justify-content-center">
+      <div className="spinner-container d-flex justify-content-center my-5">
         <div className="loading-spinner"></div>
       </div>
     );
