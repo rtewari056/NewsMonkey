@@ -6,7 +6,7 @@ import LoadingBar from "react-top-loading-bar";
 
 export default class App extends Component {
   pageSize = 6; // Change this variable to set number of articles you want to show on the page
-  apiKey = "95a1932962814593a37f42c357e22595";
+  apiKey = process.env.REACT_APP_NEWS_API_KEY; // Hiding API Key by Adding Custom Environment Variables inside .env file
   country = "in";
 
   state = {
